@@ -30,7 +30,7 @@ Dialog
             model: modelUrls
             Button {
                 text: title
-                onClicked: { siteUrl = url; pageStack.pop(); }
+                onClicked: { siteURL = url; pageStack.pop(); }
                 anchors.horizontalCenter: parent.horizontalCenter
             }
         }
