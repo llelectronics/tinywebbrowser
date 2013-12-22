@@ -41,19 +41,19 @@ ApplicationWindow
     ListModel{
         id: modelUrls
         ListElement {
-            name: "Maemo forum"
+            title: "Maemo forum"
             url: "http://talk.maemo.org"
         }
         ListElement {
-            name: "Jolla users"
+            title: "Jolla users"
             url: "http://jollausers.com"
         }
         ListElement {
-            name: "Jolla users forum"
+            title: "Jolla users forum"
             url: "http://forum.jollausers.com"
         }
         ListElement {
-            name: "Jolla Tides"
+            title: "Jolla Tides"
             url: "http://jollatides.com"
         }
     }
