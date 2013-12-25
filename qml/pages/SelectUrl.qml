@@ -10,7 +10,7 @@ Dialog
         DialogHeader {
             id: topPanel
             enabled: false
-            acceptText: "Save"
+            acceptText: qsTr("Goto")
         }
         TextField{
             id: entryURL
