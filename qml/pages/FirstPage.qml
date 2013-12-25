@@ -30,18 +30,36 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import QtQuick 2.0
 import QtWebKit 3.0
 
 Page {
     id: page
     allowedOrientations: Orientation.All
     // To enable PullDownMenu, place our content in a SilicaFlickable
+    TextField{
+        id: clip
+        visible: false
+        text: siteURL
+    }
     SilicaWebView {
         id: webview
         url: siteURL
         width: page.orientation == Orientation.Portrait ? 540 : 960
         height: page.orientation == Orientation.Portrait ? 960 : 540
+        onUrlChanged: {
+                        /* user clicked a link */
+                         if (siteURL != url)
+                            siteURL = url
+                      }
+
+        onLoadingChanged:
+        {
+            if (loadRequest.status == WebView.LoadStartedStatus)
+                urlLoading = true;
+            else
+                urlLoading = false;
+            console.log(loadRequest)
+        }
         onNavigationRequested: {
             // detect URL scheme prefix, most likely an external link
             var schemaRE = /^\w+:/;
@@ -54,12 +72,47 @@ Page {
         }
         PullDownMenu {
             MenuItem {
-                text: "About..."
+                text: qsTr("About ")+appname
+                visible: !webview.canGoBack
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
             }
             MenuItem {
-                text: "URL"
+                text: qsTr("Copy URL")
+                onClicked: { clip.selectAll(); clip.copy(); }
+            }
+            MenuItem {
+                text: qsTr("Go forward")
+                visible: webview.canGoForward
+                onClicked: webview.goForward()
+            }
+            MenuItem {
+                text: qsTr("Go back")
+                visible: webview.canGoBack
+                onClicked: webview.goBack()
+            }
+            MenuItem {
+                text: qsTr("Refresh")
+                onClicked: webview.reload()
+            }
+            MenuItem {
+                text: qsTr("Goto...")
                 onClicked: pageStack.push(Qt.resolvedUrl("SelectUrl.qml"))
+            }
+        }
+        PushUpMenu {
+            MenuItem {
+                text: qsTr("Top")
+                onClicked: webview.scrollToTop()
+            }
+            MenuItem {
+                text: qsTr("Go Back")
+                visible: webview.canGoBack
+                onClicked: webview.goBack()
+            }
+            MenuItem {
+                text: qsTr("Go Forward")
+                visible: webview.canGoForward
+                onClicked: webview.goForward()
             }
         }
     }

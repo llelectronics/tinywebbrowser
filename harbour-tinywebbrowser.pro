@@ -19,5 +19,10 @@ OTHER_FILES += qml/harbour-tinywebbrowser.qml \
     rpm/harbour-tinywebbrowser.yaml \
     harbour-tinywebbrowser.desktop \
     qml/pages/SelectUrl.qml \
-    qml/pages/AboutPage.qml
+    qml/pages/AboutPage.qml \
+    tinywebbrowser.svg \
+    harbour-tinywebbrowser.png
+
+RESOURCES += \
+    qrc.qrc
 

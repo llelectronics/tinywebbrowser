@@ -35,11 +35,17 @@ import "pages"
 ApplicationWindow
 {
     property string siteURL: "http://talk.maemo.org"
+    property bool urlLoading: false
+    property string version: "0.0.4"
+    property string appname: "Tiny Web Browser"
     initialPage: Component { FirstPage { } }
-    cover: Qt.resolvedUrl("cover/CoverPage.qml")
-
+    cover: undefined
     ListModel{
         id: modelUrls
+        ListElement {
+            title: "Jolla Together"
+            url: "http://together.jolla.com/"
+        }
         ListElement {
             title: "Maemo forum"
             url: "http://talk.maemo.org"
@@ -56,8 +62,28 @@ ApplicationWindow
             title: "Jolla Tides"
             url: "http://jollatides.com"
         }
+        ListElement {
+            title: "Review Jolla"
+            url: "http://reviewjolla.blogspot.se/"
+        }
     }
 
+    ProgressCircle {
+        id: progressCircle
+        z: 2
+        anchors.top: parent.top
+        anchors.topMargin: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: urlLoading
+        width: 32
+        height: 32
+        Timer {
+            interval: 32
+            repeat: true
+            onTriggered: progressCircle.value = (progressCircle.value + 0.005) % 1.0
+            running: urlLoading
+        }
+    }
 }
 
 
