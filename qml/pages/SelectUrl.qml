@@ -4,12 +4,12 @@ Dialog
 {
     id: urlPage
     anchors.fill: parent
+    onAccepted: { siteURL = entryURL.text; pageStack.pop(); }
     Column
     {
         anchors.fill: parent
         DialogHeader {
             id: topPanel
-            enabled: false
             acceptText: qsTr("Goto")
         }
         TextField{
@@ -20,8 +20,12 @@ Dialog
             placeholderText: qsTr("Enter an url")
             inputMethodHints: Qt.ImhUrlCharactersOnly
             Keys.onReturnPressed: {
-                siteURL = entryURL.text
-                pageStack.pop();
+                var valid = entryURL.text
+                if (valid.indexOf("http://") == -1 && valid.indexOf("https://") == -1)
+                {
+                    entryURL.text = "http://"+entryURL.text
+                }
+                urlPage.accept()
             }
         }
 

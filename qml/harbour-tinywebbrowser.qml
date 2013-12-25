@@ -36,7 +36,7 @@ ApplicationWindow
 {
     property string siteURL: "http://talk.maemo.org"
     property bool urlLoading: false
-    property string version: "0.0.4"
+    property string version: "0.0.5"
     property string appname: "Tiny Web Browser"
     initialPage: Component { FirstPage { } }
     cover: undefined
