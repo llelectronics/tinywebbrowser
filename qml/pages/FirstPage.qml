@@ -33,9 +33,16 @@ import Sailfish.Silica 1.0
 import QtWebKit 3.0
 
 Page {
-    id: page
+    id: pageWeb
     allowedOrientations: Orientation.All
     // To enable PullDownMenu, place our content in a SilicaFlickable
+    function backward()
+    {
+        if (webview.canGoBack)
+        {
+            webview.goBack()
+        }
+    }
     TextField{
         id: clip
         visible: false
@@ -44,8 +51,8 @@ Page {
     SilicaWebView {
         id: webview
         url: siteURL
-        width: page.orientation == Orientation.Portrait ? 540 : 960
-        height: page.orientation == Orientation.Portrait ? 960 : 540
+        width: pageWeb.orientation == Orientation.Portrait ? 540 : 960
+        height: pageWeb.orientation == Orientation.Portrait ? 960 : 540
         onUrlChanged: {
                         /* user clicked a link */
                          if (siteURL != url)
@@ -96,7 +103,7 @@ Page {
             }
             MenuItem {
                 text: qsTr("Goto...")
-                onClicked: pageStack.push(Qt.resolvedUrl("SelectUrl.qml"))
+                onClicked: { pageStack.pushAttached(Qt.resolvedUrl("SelectUrl.qml")); pageStack.navigateForward(); }
             }
         }
         PushUpMenu {

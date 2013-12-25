@@ -34,12 +34,15 @@ import "pages"
 
 ApplicationWindow
 {
+    id: app
     property string siteURL: "http://talk.maemo.org"
     property bool urlLoading: false
-    property string version: "0.0.5"
+    property string version: "0.0.6"
     property string appname: "Tiny Web Browser"
-    initialPage: Component { FirstPage { } }
+    property FirstPage webPage
+    initialPage: Component { HistoryPage { id: historyPage } }
     cover: undefined
+    pageStack.onCurrentPageChanged: { if (!timerHistory.running && pageStack.currentPage.objectName == "history")  timerHistory.start(); webPage.backward();}
     ListModel{
         id: modelUrls
         ListElement {
@@ -84,6 +87,18 @@ ApplicationWindow
             running: urlLoading
         }
     }
+
+    onPageStackChanged: { console.log( "stack change")}
+    Component.onCompleted: { webPage = pageStack.pushAttached(Qt.resolvedUrl("pages/FirstPage.qml")); }
+
+    Timer {
+        id: timerHistory
+        repeat: false
+        running: true
+        interval: 250
+        onTriggered: pageStack.navigateForward()
+    }
+
 }
 
 
