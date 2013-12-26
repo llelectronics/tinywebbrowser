@@ -55,10 +55,20 @@ Page {
         onLoadingChanged:
         {
             if (loadRequest.status == WebView.LoadStartedStatus)
+            {
                 urlLoading = true;
-            else
+            }
+            else if (loadRequest.status == WebView.LoadFailedStatus)
+            {
                 urlLoading = false;
-            console.log(loadRequest)
+                errorText = "Load failed\n"+loadRequest.errorString
+                popup.visible = true
+            }
+            else
+            {
+                urlLoading = false;
+
+            }
         }
         onNavigationRequested: {
             // detect URL scheme prefix, most likely an external link
@@ -67,6 +77,7 @@ Page {
                 request.action = WebView.AcceptRequest;
             } else {
                 request.action = WebView.IgnoreRequest;
+                popup.visible = true
                 // delegate request.url here
             }
         }

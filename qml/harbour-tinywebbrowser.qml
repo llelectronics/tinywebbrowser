@@ -39,6 +39,7 @@ ApplicationWindow
     property string version: "0.0.6"
     property string appname: "Tiny Web Browser"
     property string appicon: "qrc:/harbour-tinywebbrowser.png"
+    property string errorText: ""
     initialPage: Component { FirstPage { } }
     cover: undefined
 
@@ -67,6 +68,35 @@ ApplicationWindow
         ListElement {
             title: "Review Jolla"
             url: "http://reviewjolla.blogspot.se/"
+        }
+    }
+
+    Item{
+        id: popup
+        anchors.centerIn: parent
+        z: 3
+        width: 400
+        height: 400
+        visible: false
+        Rectangle {
+            anchors.fill: parent
+            border.width: 2
+            opacity: 0.5
+            border.color: "black"
+            Label {
+                anchors.fill: parent
+                color: "black" //Theme.fontColorHighlight
+                text: errorText
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: popup.visible = false
         }
     }
 
