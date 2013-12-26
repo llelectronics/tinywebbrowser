@@ -36,10 +36,12 @@ ApplicationWindow
 {
     property string siteURL: "http://talk.maemo.org"
     property bool urlLoading: false
-    property string version: "0.0.5"
+    property string version: "0.0.6"
     property string appname: "Tiny Web Browser"
+    property string appicon: "qrc:/harbour-tinywebbrowser.png"
     initialPage: Component { FirstPage { } }
     cover: undefined
+
     ListModel{
         id: modelUrls
         ListElement {

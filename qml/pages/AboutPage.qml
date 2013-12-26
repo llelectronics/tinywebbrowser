@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 Page {
+    CreditsModel {id: credits}
     Column{
         id: column1
         anchors.fill: parent
@@ -8,7 +9,7 @@ Page {
         spacing: 15
 
         Image{
-            source: "qrc:/harbour-tinywebbrowser.png"
+            source: appicon
             height: 128
             width: 128
             fillMode: Image.PreserveAspectFit
@@ -18,7 +19,7 @@ Page {
         }
         Label {
             font.pixelSize: Theme.fontSizeMedium
-            text: "Version: "+version
+            text: appname+" v"+version
             anchors.horizontalCenter: parent.horizontalCenter
 
         }
@@ -37,14 +38,22 @@ Page {
         Label {
             width: 360
             font.pixelSize: Theme.fontSizeMedium
-            text: "<center>Created 2013</center><br />Mike7b4<center></center><br /><center>Heavily based on</center><br /><center>Sailfish component gallery example</center><br />All credit to Jolla employers and Qt team!"
+            text: "Created 2013 by Mike7b4"
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            height: 300
+            //wrapMode: Text.WordWrap
+            //height: Theme.fontSizeMedium * 1 + 20
         }
 
+        Repeater{
+            model: credits
+            Label  {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: title
+                font.pixelSize: Theme.fontSizeSmall
+            }
+        }
         Rectangle{
             gradient: Gradient {
                   GradientStop { position: 0.0; color: "#333333" }
@@ -60,7 +69,7 @@ Page {
         Label {
             width: parent.width-70
             font.pixelSize: Theme.fontSizeSmall
-            text: "This app is just a testapp."
+            text: qsTr("This app is just a testapp.")
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignHCenter

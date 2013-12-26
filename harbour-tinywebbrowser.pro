@@ -21,7 +21,8 @@ OTHER_FILES += qml/harbour-tinywebbrowser.qml \
     qml/pages/SelectUrl.qml \
     qml/pages/AboutPage.qml \
     tinywebbrowser.svg \
-    harbour-tinywebbrowser.png
+    harbour-tinywebbrowser.png \
+    qml/pages/CreditsModel.qml
 
 RESOURCES += \
     qrc.qrc
