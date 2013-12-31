@@ -36,13 +36,23 @@ ApplicationWindow
 {
     property string siteURL: "http://talk.maemo.org"
     property bool urlLoading: false
-    property string version: "0.0.6"
+    property string version: "0.0.7"
     property string appname: "Tiny Web Browser"
     property string appicon: "qrc:/harbour-tinywebbrowser.png"
     property string errorText: ""
-    initialPage: Component { FirstPage { } }
+ //   initialPage: wrap
     cover: undefined
 
+    Component
+    {
+        id: wrap
+        Timer {
+            repeat: false
+            running: true
+            interval: 100
+            onTriggered: { pageStack.push(Qt.resolvedUrl("FirstPage.qml")); }
+        }
+    }
     ListModel{
         id: modelUrls
         ListElement {
@@ -116,6 +126,11 @@ ApplicationWindow
             running: urlLoading
         }
     }
+
+    Component.onCompleted: {
+                                pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"));
+                                pageStack.pushAttached(Qt.resolvedUrl("pages/SelectUrl.qml")); }
+
 }
 
 

@@ -41,6 +41,8 @@ Page {
         visible: false
         text: siteURL
     }
+
+
     SilicaWebView {
         id: webview
         url: siteURL
@@ -51,6 +53,8 @@ Page {
                          if (siteURL != url)
                             siteURL = url
                       }
+
+        header: PageHeader {height: 0}
 
         onLoadingChanged:
         {
@@ -107,7 +111,7 @@ Page {
             }
             MenuItem {
                 text: qsTr("Goto...")
-                onClicked: pageStack.push(Qt.resolvedUrl("SelectUrl.qml"))
+                onClicked: pageStack.navigateForward()
             }
         }
         PushUpMenu {
