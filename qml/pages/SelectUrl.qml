@@ -27,6 +27,7 @@ Dialog
                 }
                 urlPage.accept()
             }
+            onFocusChanged: entryURL.selectAll()
         }
 
         Repeater {
