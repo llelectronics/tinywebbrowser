@@ -46,9 +46,9 @@ Dialog
                         entryURL.text = "http://"+valid
                     }
                     urlPage.accept()
-                }
-                onFocusChanged: if (focus === true) entryURL.selectAll()
+                }   
             }
+            onFocusChanged: if (focus === true) entryURL.selectAll()
         }
 
         SilicaListView {
@@ -69,11 +69,11 @@ Dialog
         anchors {
 //            left: parent.left; leftMargin: Theme.paddingMedium
 //            right: parent.right; rightMargin: Theme.paddingMedium
-            bottom: parent.bottom
+            bottom: parent.bottom; bottomMargin: Theme.paddingMedium
             //verticalCenter: parent.verticalCenter
         }
         // 5 icons, 4 spaces between
-        spacing: (width - (favIcon.width * 5)) / 4
+        //spacing: (width - (favIcon.width * 5)) / 4
 
         IconButton {
             id: favIcon
@@ -81,10 +81,10 @@ Dialog
             icon.source: favorited ? "image://theme/icon-m-favorite-selected" : "image://theme/icon-m-favorite"
             onClicked: {
                 if (favorited) {
-                    console.debug("Remove Bookmark")
+                    console.debug("Remove Bookmark");
                     bookmarks.removeBookmark(siteURL)
                 } else {
-                    console.debug("Add Bookmark " + siteURL)
+                    console.debug("Add Bookmark " + siteURL + " " + siteTitle);
                     bookmarks.addBookmark(siteURL, siteTitle)
                 }
             }

@@ -109,7 +109,7 @@ Page {
 
         // Prevent crashes by loading the mobile site instead of the desktop one // TODO: Make this configurable
         experimental.userAgent: "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
-        experimental.preferences.minimumFontSize: 20  // We need readable fonts on g+, youtube and so on. This might hurt tmo though
+        experimental.preferences.minimumFontSize: 17  // We need readable fonts on g+, youtube and so on. This might hurt tmo though
 
         onLoadingChanged:
         {
@@ -126,7 +126,7 @@ Page {
             else
             {
                 urlLoading = false;
-
+                if (url == "about:bookmarks") pageStack.push(Qt.resolvedUrl("SelectUrl.qml"), { dataContainer: page, siteURL: webview.url, bookmarks: page.bookmarks, siteTitle: webview.title})
             }
         }
         onNavigationRequested: {

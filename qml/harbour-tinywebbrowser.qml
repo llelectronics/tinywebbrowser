@@ -31,12 +31,13 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import "pages"
+import "pages/helper/db.js" as DB
 
 ApplicationWindow
 {
-    property string siteURL: "http://talk.maemo.org"  // TODO: Make this configurable via db
+    property string siteURL: "about:bookmarks" //"http://talk.maemo.org"  // TODO: Make this configurable via db
     property bool urlLoading: false
-    property string version: "0.0.7"
+    property string version: "0.0.8"
     property string appname: "Tiny Web Browser"
     property string appicon: "qrc:/harbour-tinywebbrowser.png"
     property string errorText: ""
@@ -50,7 +51,7 @@ ApplicationWindow
             repeat: false
             running: true
             interval: 100
-            onTriggered: { pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"), {bookmarks: modelUrls}); }
+            onTriggered: pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"), {bookmarks: modelUrls});
         }
     }
 
@@ -68,12 +69,14 @@ ApplicationWindow
         function removeBookmark(siteUrl) {
             for (var i=0; i<count; i++) {
                 if (get(i).url === siteUrl) remove(i);
+                DB.removeBookmark(siteUrl);
                 // TODO: Remove from db aswell
             }
         }
 
         function addBookmark(siteUrl, siteTitle) {
             append({"title": siteTitle, "url": siteUrl});
+            DB.addBookmark(siteTitle,siteUrl);
             // TODO: Add to db aswell
         }
 
@@ -101,59 +104,14 @@ ApplicationWindow
             title: "Review Jolla"
             url: "http://reviewjolla.blogspot.se/"
         }
+        // Load Bookmarks
+        Component.onCompleted: {
+            DB.initialize();
+            DB.getBookmarks();
+        }
     }
 
     // TODO: Bookmark loading here
-
-//    Item{
-//        id: popup
-//        anchors.centerIn: parent
-//        z: 3
-//        width: 400
-//        height: 400
-//        visible: false
-//        Rectangle {
-//            anchors.fill: parent
-//            border.width: 2
-//            opacity: 0.5
-//            border.color: "black"
-//            Label {
-//                anchors.fill: parent
-//                color: "black" //Theme.fontColorHighlight
-//                text: errorText
-//                anchors.verticalCenter: parent.verticalCenter
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                horizontalAlignment: Text.AlignHCenter
-//                verticalAlignment: Text.AlignHCenter
-//                wrapMode: Text.WordWrap
-//            }
-//        }
-//        MouseArea {
-//            anchors.fill: parent
-//            onClicked: popup.visible = false
-//        }
-//    }
-
-//    ProgressCircle {
-//        id: progressCircle
-//        z: 2
-//        anchors.top: parent.top
-//        anchors.topMargin: 16
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        visible: urlLoading
-//        width: 32
-//        height: 32
-//        Timer {
-//            interval: 32
-//            repeat: true
-//            onTriggered: progressCircle.value = (progressCircle.value + 0.005) % 1.0
-//            running: urlLoading
-//        }
-//    }
-
-//    Component.onCompleted: {
-//                                pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"));
-//                                pageStack.pushAttached(Qt.resolvedUrl("pages/SelectUrl.qml")); }
 
 }
 
