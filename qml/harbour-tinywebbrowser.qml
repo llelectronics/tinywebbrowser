@@ -34,13 +34,13 @@ import "pages"
 
 ApplicationWindow
 {
-    property string siteURL: "http://talk.maemo.org"
+    property string siteURL: "http://talk.maemo.org"  // TODO: Make this configurable via db
     property bool urlLoading: false
     property string version: "0.0.7"
     property string appname: "Tiny Web Browser"
     property string appicon: "qrc:/harbour-tinywebbrowser.png"
     property string errorText: ""
- //   initialPage: wrap
+    initialPage: wrap
     cover: undefined
 
     Component
@@ -50,30 +50,52 @@ ApplicationWindow
             repeat: false
             running: true
             interval: 100
-            onTriggered: { pageStack.push(Qt.resolvedUrl("FirstPage.qml")); }
+            onTriggered: { pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"), {bookmarks: modelUrls}); }
         }
     }
+
+    // Example Data
     ListModel{
         id: modelUrls
+
+        function contains(siteUrl) {
+            for (var i=0; i<count; i++) {
+                if (get(i).url === siteUrl)  return true;
+            }
+            return false;
+        }
+
+        function removeBookmark(siteUrl) {
+            for (var i=0; i<count; i++) {
+                if (get(i).url === siteUrl) remove(i);
+                // TODO: Remove from db aswell
+            }
+        }
+
+        function addBookmark(siteUrl, siteTitle) {
+            append({"title": siteTitle, "url": siteUrl});
+            // TODO: Add to db aswell
+        }
+
         ListElement {
             title: "Jolla Together"
             url: "http://together.jolla.com/"
         }
         ListElement {
             title: "Maemo forum"
-            url: "http://talk.maemo.org"
+            url: "http://talk.maemo.org/"
         }
         ListElement {
             title: "Jolla users"
-            url: "http://jollausers.com"
+            url: "http://jollausers.com/"
         }
         ListElement {
             title: "Jolla users forum"
-            url: "http://forum.jollausers.com"
+            url: "http://forum.jollausers.com/"
         }
         ListElement {
             title: "Jolla Tides"
-            url: "http://jollatides.com"
+            url: "http://jollatides.com/"
         }
         ListElement {
             title: "Review Jolla"
@@ -81,55 +103,57 @@ ApplicationWindow
         }
     }
 
-    Item{
-        id: popup
-        anchors.centerIn: parent
-        z: 3
-        width: 400
-        height: 400
-        visible: false
-        Rectangle {
-            anchors.fill: parent
-            border.width: 2
-            opacity: 0.5
-            border.color: "black"
-            Label {
-                anchors.fill: parent
-                color: "black" //Theme.fontColorHighlight
-                text: errorText
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-            }
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: popup.visible = false
-        }
-    }
+    // TODO: Bookmark loading here
 
-    ProgressCircle {
-        id: progressCircle
-        z: 2
-        anchors.top: parent.top
-        anchors.topMargin: 16
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: urlLoading
-        width: 32
-        height: 32
-        Timer {
-            interval: 32
-            repeat: true
-            onTriggered: progressCircle.value = (progressCircle.value + 0.005) % 1.0
-            running: urlLoading
-        }
-    }
+//    Item{
+//        id: popup
+//        anchors.centerIn: parent
+//        z: 3
+//        width: 400
+//        height: 400
+//        visible: false
+//        Rectangle {
+//            anchors.fill: parent
+//            border.width: 2
+//            opacity: 0.5
+//            border.color: "black"
+//            Label {
+//                anchors.fill: parent
+//                color: "black" //Theme.fontColorHighlight
+//                text: errorText
+//                anchors.verticalCenter: parent.verticalCenter
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                horizontalAlignment: Text.AlignHCenter
+//                verticalAlignment: Text.AlignHCenter
+//                wrapMode: Text.WordWrap
+//            }
+//        }
+//        MouseArea {
+//            anchors.fill: parent
+//            onClicked: popup.visible = false
+//        }
+//    }
 
-    Component.onCompleted: {
-                                pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"));
-                                pageStack.pushAttached(Qt.resolvedUrl("pages/SelectUrl.qml")); }
+//    ProgressCircle {
+//        id: progressCircle
+//        z: 2
+//        anchors.top: parent.top
+//        anchors.topMargin: 16
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        visible: urlLoading
+//        width: 32
+//        height: 32
+//        Timer {
+//            interval: 32
+//            repeat: true
+//            onTriggered: progressCircle.value = (progressCircle.value + 0.005) % 1.0
+//            running: urlLoading
+//        }
+//    }
+
+//    Component.onCompleted: {
+//                                pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"));
+//                                pageStack.pushAttached(Qt.resolvedUrl("pages/SelectUrl.qml")); }
 
 }
 

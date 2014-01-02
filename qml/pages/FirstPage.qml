@@ -31,10 +31,13 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import QtWebKit 3.0
+import QtWebKit.experimental 1.0
 
 Page {
     id: page
     allowedOrientations: Orientation.All
+    property alias url: webview.url
+    property ListModel bookmarks
     // To enable PullDownMenu, place our content in a SilicaFlickable
     TextField{
         id: clip
@@ -42,19 +45,71 @@ Page {
         text: siteURL
     }
 
+    ProgressCircle {
+        id: progressCircle
+        z: 2
+        anchors.top: parent.top
+        anchors.topMargin: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: urlLoading
+        width: 32
+        height: 32
+        Timer {
+            interval: 32
+            repeat: true
+            onTriggered: progressCircle.value = (progressCircle.value + 0.005) % 1.0
+            running: urlLoading
+        }
+    }
+
+    Item{
+        id: popup
+        anchors.centerIn: parent
+        z: 3
+        width: 400
+        height: 400
+        visible: false
+        Rectangle {
+            anchors.fill: parent
+            border.width: 2
+            opacity: 0.5
+            border.color: "black"
+            Label {
+                anchors.fill: parent
+                color: "black" //Theme.fontColorHighlight
+                text: errorText
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: popup.visible = false
+        }
+    }
+
 
     SilicaWebView {
         id: webview
         url: siteURL
-        width: page.orientation == Orientation.Portrait ? 540 : 960
-        height: page.orientation == Orientation.Portrait ? 960 : 540
-        onUrlChanged: {
-                        /* user clicked a link */
-                         if (siteURL != url)
-                            siteURL = url
-                      }
+        // Don't use fixed values otherwise you won't make it into harbour
+        //        width: page.orientation == Orientation.Portrait ? 540 : 960
+        //        height: page.orientation == Orientation.Portrait ? 960 : 540
+        anchors.fill: parent // automatically changed width and heights according to orientation
+        // onUrlChanged: {
+        /* user clicked a link */
+        //if (siteURL != url)
+        //   siteURL = url     // WTF: Create a loop on redirects ?
+        //               }
 
         header: PageHeader {height: 0}
+
+        // Prevent crashes by loading the mobile site instead of the desktop one // TODO: Make this configurable
+        experimental.userAgent: "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+        experimental.preferences.minimumFontSize: 20  // We need readable fonts on g+, youtube and so on. This might hurt tmo though
 
         onLoadingChanged:
         {
@@ -93,12 +148,21 @@ Page {
             }
             MenuItem {
                 text: qsTr("Copy URL")
-                onClicked: { clip.selectAll(); clip.copy(); }
+                onClicked: { clip.text = webview.url ; clip.selectAll(); clip.copy(); }
             }
             MenuItem {
                 text: qsTr("Go forward")
                 visible: webview.canGoForward
                 onClicked: webview.goForward()
+            }
+
+            MenuItem {
+                text: qsTr("Refresh")
+                onClicked: webview.reload()
+            }
+            MenuItem {
+                text: qsTr("Bottom")
+                onClicked: webview.scrollToBottom()
             }
             MenuItem {
                 text: qsTr("Go back")
@@ -106,13 +170,17 @@ Page {
                 onClicked: webview.goBack()
             }
             MenuItem {
-                text: qsTr("Refresh")
-                onClicked: webview.reload()
-            }
-            MenuItem {
                 text: qsTr("Goto...")
-                onClicked: pageStack.navigateForward()
+                //onClicked: pageStack.navigateForward()
+                onClicked: pageStack.push(Qt.resolvedUrl("SelectUrl.qml"), { dataContainer: page, siteURL: webview.url, bookmarks: page.bookmarks, siteTitle: webview.title})
             }
+            Label {
+                text: webview.title
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+            }
+
         }
         PushUpMenu {
             MenuItem {
