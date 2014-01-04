@@ -108,8 +108,16 @@ Page {
         header: PageHeader {height: 0}
 
         // Prevent crashes by loading the mobile site instead of the desktop one // TODO: Make this configurable
-        experimental.userAgent: "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
-        experimental.preferences.minimumFontSize: 17  // We need readable fonts on g+, youtube and so on. This might hurt tmo though
+        //experimental.userAgent: "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+        experimental.userAgent: "Mozilla/5.0 (Maemo; Linux; Jolla; Sailfish; Mobile) AppleWebKit/534.13 (KHTML, like Gecko) NokiaBrowser/8.5.0 Mobile Safari/534.13"
+        experimental.preferences.minimumFontSize: 18  // We need readable fonts on g+, youtube and so on. This might hurt tmo though
+        experimental.preferences.defaultFontSize: 22
+        experimental.preferences.defaultFixedFontSize: 20
+        experimental.preferences.fullScreenEnabled: true
+        experimental.preferences.dnsPrefetchEnabled: true
+        // Scale the websites like g+ and others a little bit for better reading
+        experimental.deviceWidth: page.width / 1.5
+        experimental.deviceHeight: page.height
 
         onLoadingChanged:
         {
