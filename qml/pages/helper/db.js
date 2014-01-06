@@ -63,7 +63,7 @@ function getBookmarks() {
         var rs = tx.executeSql('SELECT * FROM bookmarks ORDER BY bookmarks.title;');
         for (var i = 0; i < rs.rows.length; i++) {
             modelUrls.append({"title" : rs.rows.item(i).title, "url" : rs.rows.item(i).url});
-            console.debug("Get Bookmarks from db:" + rs.rows.item(i).title, rs.rows.item(i).url)
+            //console.debug("Get Bookmarks from db:" + rs.rows.item(i).title, rs.rows.item(i).url)
         }
     })
 }

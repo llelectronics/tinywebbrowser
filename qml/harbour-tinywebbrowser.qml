@@ -35,24 +35,100 @@ import "pages/helper/db.js" as DB
 
 ApplicationWindow
 {
+    id: mainWindow
     property string siteURL: "about:bookmarks" //"http://talk.maemo.org"  // TODO: Make this configurable via db
     property bool urlLoading: false
     property string version: "0.0.8"
     property string appname: "Tiny Web Browser"
     property string appicon: "qrc:/harbour-tinywebbrowser.png"
     property string errorText: ""
-    initialPage: wrap
+    //initialPage: tabView
     cover: undefined
+    property string currentTab: ""
+    property bool hasTabOpen: (tabModel.count !== 0)
 
     Component
     {
-        id: wrap
-        Timer {
-            repeat: false
-            running: true
-            interval: 100
-            onTriggered: pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"), {bookmarks: modelUrls});
+        id: tabView
+//        Timer {
+//            repeat: false
+//            running: true
+//            interval: 100
+//            onTriggered: pageStack.push(Qt.resolvedUrl("pages/FirstPage.qml"), {bookmarks: modelUrls});
+//        }
+        FirstPage {
+            bookmarks: modelUrls
         }
+    }
+
+    function openNewTab(pageid, url) {
+        console.log("openNewTab: "+ pageid + ', currentTab: ' + currentTab);
+        if (hasTabOpen) {
+            console.debug("1. Pagid: " + pageid)
+            tabModel.insert(0, { "title": "Loading..", "url": url, "pageid": pageid } );
+        } else {
+            console.debug("2. Pagid: " + pageid)
+            tabModel.set(0, { "title": "Loading..", "url": url, "pageid": pageid } );
+        }
+        var webView = tabView.createObject(mainWindow, { id: pageid, objectName: pageid } );
+        webView.url = url;
+
+        currentTab = pageid;
+        //tabListView.currentIndex = 0 // move highlight to top
+        if (initialPage == "" || initialPage == undefined) {
+            console.debug("Initial Page loading...");
+            pageStack.push(webView, {bookmarks: modelUrls, tabModel: tabModel, pageId: pageid});
+        }
+    }
+
+    function switchToTab(pageid) {
+        console.log("switchToTab: "+ pageid + " , from: " + currentTab); //+ ' , at ' + tabListView.currentIndex);
+        if (currentTab !== pageid ) {
+            pageStack.replace(pageStack.find(function(page) {
+                return page.pageId == pageid;})
+                ,PageStackAction.Animated);
+            currentTab = pageid;
+        }
+    }
+
+    function closeTab(deleteIndex, pageid) {
+        //console.log('closeTab: ' + pageid + ' at ' + deleteIndex + ': ' + tabModel.get(deleteIndex))
+        //console.log('\ttabListView.model.get(deleteIndex): ' + tabListView.model.get(deleteIndex).pageid)
+        tabModel.remove(deleteIndex);
+        if (deleteIndex != 0) currentTab = tabModel.get(deleteIndex-1).pageid;
+        else currentTab = tabModel.get(0).pageid;
+        pageStack.pop(pageStack.find(function(page) {
+            return page.pageId == currentTab;})
+            ,PageStackAction.Animated);
+
+        if (hasTabOpen) {
+            switchToTab(currentTab)
+        } else {
+            currentTab = ""; // clean currentTab
+        }
+    }
+
+    function salt(){
+        var salt = ""
+        var RandomString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for( var i=0; i < 5; i++ ) {
+            salt += RandomString.charAt(Math.floor(Math.random() * RandomString.length));
+        }
+        return salt
+    }
+
+    ListModel {
+        id: tabModel
+
+        function getIndex(title) {
+            for (var i=0; i<count; i++) {
+                if (get(i).title == title)  { // type transformation is intended here
+                    return i;
+                }
+            }
+            return 0;
+        }
+
     }
 
     // Example Data
@@ -61,7 +137,9 @@ ApplicationWindow
 
         function contains(siteUrl) {
             for (var i=0; i<count; i++) {
-                if (get(i).url === siteUrl)  return true;
+                if (get(i).url == siteUrl)  { // type transformation is intended here
+                    return true;
+                }
             }
             return false;
         }
@@ -70,14 +148,12 @@ ApplicationWindow
             for (var i=0; i<count; i++) {
                 if (get(i).url === siteUrl) remove(i);
                 DB.removeBookmark(siteUrl);
-                // TODO: Remove from db aswell
             }
         }
 
         function addBookmark(siteUrl, siteTitle) {
-            append({"title": siteTitle, "url": siteUrl});
+            append({"title":siteTitle, "url":siteUrl});
             DB.addBookmark(siteTitle,siteUrl);
-            // TODO: Add to db aswell
         }
 
         ListElement {
@@ -111,7 +187,10 @@ ApplicationWindow
         }
     }
 
-    // TODO: Bookmark loading here
+    Component.onCompleted: {
+        //console.debug("Initial Page:" + initialPage)
+        openNewTab("page"+salt(), "about:blank");
+    }
 
 }
 
