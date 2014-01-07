@@ -55,6 +55,20 @@ Page {
             }
         }
     }
+    // Todo: Need to merge fixUrl with loadUrl if latter is even necessary anymore
+    function fixUrl(nonFixedUrl) {
+        var valid = nonFixedUrl
+        if (valid.match("^/")) return url + valid  // Necessary for reddit or google news i page but it will break local filesystem support, so you NEED to enter file:// infront
+        else if (valid.indexOf(":")<0) {
+            if (valid.indexOf(".")<0 || valid.indexOf(" ")>=0) {
+                // Fall back to a search engine; hard-code Google
+                return "http://www.google.com/search?q="+valid;
+            } else {
+                return "http://"+valid;
+            }
+        }
+        else return valid;
+    }
 
     ProgressCircle {
         id: progressCircle
@@ -130,9 +144,14 @@ Page {
         // Scale the websites like g+ and others a little bit for better reading
         experimental.deviceWidth: page.width / 1.5
         experimental.deviceHeight: page.height
+        experimental.preferences.developerExtrasEnabled: true;
+
+        // This userScript makes longpress detection and other things working
+        experimental.userScripts: [Qt.resolvedUrl("helper/userscript.js")];
+        experimental.preferences.navigatorQtObjectEnabled: true;
 
         experimental.onMessageReceived: {
-            //console.log('onMessageReceived: ' + message.data );
+            console.log('onMessageReceived: ' + message.data );
             var data = null
             try {
                 data = JSON.parse(message.data)
@@ -144,14 +163,16 @@ Page {
             case 'link': {
                 //updateContextMenu(data.pageX, data.pageY, data.href)
                 if (data.target === '_blank') { // open link in new tab
-                    openNewTab('page-'+salt(), data.href)
+                    openNewTab('page-'+salt(), fixUrl(data.href));
                 }
                 break;
             }
             // TODO: Need to add a contextmenu for opening up pages in new tab
-            //            case 'longpress': {
-            //                updateContextMenu(data.pageX, data.pageY, fixUrl(data.href));
-            //            }
+            case 'longpress': {
+                // Open a new tab for now
+                console.debug(fixUrl(data.href));
+                openNewTab('page-'+salt(), fixUrl(data.href));
+            }
             }
         }
 

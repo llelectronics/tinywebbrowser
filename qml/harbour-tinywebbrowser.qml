@@ -46,6 +46,7 @@ ApplicationWindow
     cover: undefined
     property string currentTab: ""
     property bool hasTabOpen: (tabModel.count !== 0)
+    property alias tabView: tabView
 
     Component
     {
